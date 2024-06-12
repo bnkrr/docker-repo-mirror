@@ -1,0 +1,5 @@
+.env
+caddy-logs/
+caddy-data/
+registry-data/
+.local/

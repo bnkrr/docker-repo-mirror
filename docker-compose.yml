@@ -1,0 +1,31 @@
+version: '3.1'
+services:
+  registry:
+    image: library/registry:2
+    networks:
+      - registry-net
+    environment:
+      REGISTRY_HTTP_ADDR: "0.0.0.0:10000"
+      REGISTRY_PROXY_REMOTEURL: "https://registry-1.docker.io"
+    restart: unless-stopped
+    container_name: docker-hub-registry
+    volumes:
+      - ./registry-data:/var/lib/registry
+  web:
+    image: library/caddy:latest
+    container_name: caddy-server
+    volumes:
+      - ./caddy:/etc/caddy
+      - ./caddy-logs:/logs
+      - ./caddy-data:/data/caddy
+    networks:
+      - registry-net
+    ports:
+      - 80:80
+      - ${PORT}:10001
+    restart: unless-stopped
+    environment:
+      DOMAIN_SUFFIX: ${DOMAIN_SUFFIX}
+
+networks:
+  registry-net:
